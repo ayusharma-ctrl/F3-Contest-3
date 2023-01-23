@@ -7,17 +7,13 @@ var addSection2 = document.getElementById("addSection2")
 var addSection3 = document.getElementById("addSection3")
 var addSection4 = document.getElementById("addSection4")
 
-let date = new Date().toLocaleDateString();
+let date = new Date().toLocaleDateString(); // to get it in this format -> 1/24/2023
+//ID's to display date in different-different sections
 let idToday = 1
 let idFuture = 1
 let idCompleted = 1
 
-var imageDelBla = document.createElement("img")
-imageDelBla.src = "DeleteBlack.png"
-
-var imageTick = `<img src="Tick.png" onclick="move()">`
-var imageDelete = `<img src="Delete.png">`
-
+//constructor function to create objects
 function CreateObject(name, deadline, priority) {
     this.name = name;
     this.date = deadline;
@@ -25,14 +21,14 @@ function CreateObject(name, deadline, priority) {
     this.completed = false;
 }
 
-
+//add button
 function addItem() {
     if (itemName.value !== '' && deadline.value !== '' && priority.value !== '') {
         const inputDate = dateConvert(deadline.value)
         if (inputDate == date) {
             todayTodo(itemName.value, inputDate, priority.value)
         }
-        else if (inputDate > date || inputDate < date ) {
+        else if (inputDate > date || inputDate < date) {
             futureTodo(itemName.value, inputDate, priority.value)
         }
     }
@@ -44,84 +40,74 @@ function addItem() {
 
 addItemBtn.addEventListener('click', addItem)
 
-function futureTodo(name, deadline, priority) {
-    const todoEntry = new CreateObject(name, deadline, priority);
-    const localArr = JSON.parse(localStorage.getItem('userFuture'))
-    localArr.push(todoEntry)
-    localStorage.setItem('userFuture', JSON.stringify(localArr))
-    // const todoEntryData = JSON.parse(localStorage.getItem('user'))
-    insertFutureTodo(todoEntry)
-}
-
-function insertFutureTodo(obj) {
-    const div = document.createElement("div")
-    div.innerHTML = `<span>${idFuture}.  ${obj.name}</span> <span>${obj.date}</span> <span>Priority:  ${obj.priority} </span> <span> ${imageTick} &nbsp &nbsp ${imageDelete} </span>`
-    div.className = "container"
-    div.id = "todayTodo"
-    addSection3.append(div)
-    if(obj.date < date){
-        div.style.borderWidth = '4px'
-        div.style.borderColor = "red";
-    }
-    idFuture++
-}
-
+//creating object to insert in array/today section using User Input
 function todayTodo(name, deadline, priority) {
     const todoEntry = new CreateObject(name, deadline, priority);
-    const localArr = JSON.parse(localStorage.getItem('userToday'))
-    localArr.push(todoEntry)
-    localStorage.setItem('userToday', JSON.stringify(localArr))
+    const userToday = JSON.parse(localStorage.getItem('userToday')) || []
+    userToday.push(todoEntry)
+    localStorage.setItem('userToday', JSON.stringify(userToday))
     insertTodayTodo(todoEntry)
 }
-
+//insert in section 2
 function insertTodayTodo(obj) {
     const div = document.createElement("div")
-    div.innerHTML = `<span>${idToday}.  ${obj.name}</span> <span>${obj.date}</span> <span>Priority:  ${obj.priority} </span> <span> ${imageTick} &nbsp &nbsp ${imageDelete} </span>`
+    div.innerHTML = `<span>${idToday}.  ${obj.name} </span> <span>${obj.date}</span> <span>Priority:  ${obj.priority} </span> <div> <button class= "btn2" type="submit"> <img src="Tick.png" onclick="moveToday(${idToday})"> </button> &nbsp &nbsp <button class= "btn2" type="submit"> <img src="Delete.png" onclick="removeToday(${idToday})"> </button> </div>`
     div.className = "container"
     div.id = "todayTodo"
     addSection2.append(div)
     idToday++
 }
-
-function onReload() {
-//today
-    const userToday = JSON.parse(localStorage.getItem('userToday'))
-    if (userToday == null) {
-        const userToday = []
-        const todoEntry = new CreateObject("Today's Task 1", date, "High");
-        userToday.push(todoEntry)
-        localStorage.setItem('userToday', JSON.stringify(userToday))
+//creating object to insert in array/future section using User Input
+function futureTodo(name, deadline, priority) {
+    const todoEntry = new CreateObject(name, deadline, priority);
+    const userFuture = JSON.parse(localStorage.getItem('userFuture')) || []
+    userFuture.push(todoEntry)
+    localStorage.setItem('userFuture', JSON.stringify(userFuture))
+    // const todoEntryData = JSON.parse(localStorage.getItem('user'))
+    insertFutureTodo(todoEntry)
+}
+//insert in section 3
+function insertFutureTodo(obj) {
+    const div = document.createElement("div")
+    div.innerHTML = `<span>${idFuture}.  ${obj.name} </span> <span>${obj.date}</span> <span>Priority:  ${obj.priority} </span> <div> <button class= "btn2" type="submit"> <img src="Tick.png" onclick="moveFuture(${idFuture})"> </button> &nbsp &nbsp <button class= "btn2" type="submit"> <img src="Delete.png" onclick="removeFuture(${idFuture})"> </button> </div>`
+    div.className = "container"
+    div.id = "todayTodo"
+    addSection3.append(div)
+    if (obj.date < date) {
+        div.style.borderWidth = '4px'
+        div.style.borderColor = "red";
     }
+    idFuture++
+}
+//insert in section 4
+function insertCompleted(obj) {
+    const div = document.createElement("div")
+    div.innerHTML = `<span>${idCompleted}.  ${obj.name} </span> <span>${obj.date}</span> <span>Priority:  ${obj.priority} </span> <div> <button id="btn1" type="submit"> <img src="DeleteBlack.png" onclick="removeCompleted(${idCompleted})"> </div>`
+    div.className = "container"
+    div.id = "completedTodo"
+    addSection4.append(div)
+    idCompleted++
+}
 
-    userToday.map((e)=>{
+//page reload
+function onReload() {
+    addSection2.innerHTML = ''
+    addSection3.innerHTML = ''
+    addSection4.innerHTML = ''
+    //today
+    const userToday = JSON.parse(localStorage.getItem('userToday')) || []
+    userToday.map((e) => {
         insertTodayTodo(e)
     })
 
-//future
-
-    const userFuture = JSON.parse(localStorage.getItem('userFuture'))
-    if (userFuture == null) {
-        const userFuture = []
-        const todoEntry = new CreateObject("Future's Task 1", "6/15/2023", "High");
-        const todoEntry1 = new CreateObject("Learn DSA", "1/20/2023", "High");
-        userFuture.push(todoEntry)
-        userFuture.push(todoEntry1)
-        localStorage.setItem('userFuture', JSON.stringify(userFuture))
-    }
-
+    //future
+    const userFuture = JSON.parse(localStorage.getItem('userFuture')) || []
     userFuture.map((e) => {
         insertFutureTodo(e)
     })
 
-//completed
-    const userCompleted = JSON.parse(localStorage.getItem('userCompleted'))
-    if (userCompleted == null) {
-        const userCompleted = []
-        const todoEntry = new CreateObject("Completed Task 1", "12/25/2022", "Medium");
-        userCompleted.push(todoEntry)
-        localStorage.setItem('userCompleted', JSON.stringify(userCompleted))
-    }
-
+    //completed
+    const userCompleted = JSON.parse(localStorage.getItem('userCompleted')) || []
     userCompleted.map((e) => {
         insertCompleted(e)
     })
@@ -130,19 +116,47 @@ function onReload() {
 document.addEventListener('DOMContentLoaded', onReload)
 
 
-
-
-function insertCompleted(obj) {
-    const div = document.createElement("div")
-    div.innerHTML = `<span>${idCompleted}.  ${obj.name}</span> <span>${obj.date}</span> <span>Priority:  ${obj.priority} </span>`
-    div.className = "container"
-    div.id = "completedTodo"
-    div.append(imageDelBla)
-    addSection4.append(div)
-    idCompleted++
+function moveToday(id){
+    const userToday = JSON.parse(localStorage.getItem('userToday')) || []
+    const userCompleted = JSON.parse(localStorage.getItem('userCompleted')) || []
+    const collect = userToday.splice(id-1,1)
+    userCompleted.push(collect[0])
+    localStorage.setItem('userToday', JSON.stringify(userToday))
+    localStorage.setItem('userCompleted', JSON.stringify(userCompleted))
+    window.location.reload();
 }
 
+function moveFuture(id){
+    const userFuture = JSON.parse(localStorage.getItem('userFuture')) || []
+    const userCompleted = JSON.parse(localStorage.getItem('userCompleted')) || []
+    const collect = userFuture.splice(id-1,1)
+    userCompleted.push(collect[0])
+    localStorage.setItem('userFuture', JSON.stringify(userFuture))
+    localStorage.setItem('userCompleted', JSON.stringify(userCompleted))
+    window.location.reload();
+}
 
+function removeToday(id){
+    const userToday = JSON.parse(localStorage.getItem('userToday'))
+    userToday.splice(id-1,1)
+    localStorage.setItem('userToday', JSON.stringify(userToday))
+    window.location.reload();
+}
+
+function removeFuture(id){
+    const userFuture = JSON.parse(localStorage.getItem('userFuture'))
+    userFuture.splice(id-1,1)
+    localStorage.setItem('userFuture', JSON.stringify(userFuture))
+    window.location.reload();
+}
+
+function removeCompleted(id){
+    const userCompleted = JSON.parse(localStorage.getItem('userCompleted'))
+    userCompleted.splice(id-1,1)
+    localStorage.setItem('userCompleted', JSON.stringify(userCompleted))
+    window.location.reload();
+}
+// converting date
 function dateConvert(s) {
     let pqr = s.replace("-01", "-1")
     pqr = pqr.replace("-02", "-2")
@@ -159,21 +173,18 @@ function dateConvert(s) {
         const d = pqr.substring(7, 9)
         return m + "/" + d + "/" + y
     }
-
     else if (pqr.length == 9 && pqr.charAt(7) == '-') {
         const y = pqr.substring(0, 4)
         const m = pqr.substring(5, 7)
         const d = pqr.substring(8, 9)
         return m + "/" + d + "/" + y
     }
-
-    else if(pqr.length == 8){
+    else if (pqr.length == 8) {
         const y = pqr.substring(0, 4)
         const m = pqr.substring(5, 6)
         const d = pqr.substring(7, 8)
         return m + "/" + d + "/" + y
     }
-
     else {
         const y = pqr.substring(0, 4)
         const m = pqr.substring(5, 7)
@@ -181,23 +192,3 @@ function dateConvert(s) {
         return m + "/" + d + "/" + y
     }
 }
-
-
-
-function deleteCompleted(){
-    // console.log(this.parentElement.children[0].innerText)
-    const temp = this.parentElement.children[0].innerText
-    const temp1 = temp.slice(3)
-    const userCompleted = JSON.parse(localStorage.getItem('userCompleted'))
-    userCompleted.splice(userCompleted.find((e)=>e.name === temp1),1)
-    localStorage.setItem('userCompleted', JSON.stringify(userCompleted))
-    this.parentElement.remove()
-}
-
-imageDelBla.addEventListener('click', deleteCompleted)
-
-// function move(){
-//     console.log("working")
-//     console.log(this)
-
-// }

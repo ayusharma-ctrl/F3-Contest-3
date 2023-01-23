@@ -1,4 +1,4 @@
-*{
+* {
     font-family: 'Inter', sans-serif;
     font-style: normal;
     margin: 0;
@@ -6,13 +6,13 @@
     box-sizing: border-box;
 }
 
-#section1{
+#section1 {
     height: 20vh;
     margin: 30px;
     margin-bottom: 0px;
 }
 
-#itemName{
+#itemName {
     height: 40px;
     width: 600px;
     padding-left: 20px;
@@ -20,7 +20,7 @@
     font-weight: 400;
 }
 
-#deadline{
+#deadline {
     height: 40px;
     width: 340px;
     padding-left: 15px;
@@ -29,7 +29,7 @@
     font-weight: 400;
 }
 
-#priority{
+#priority {
     height: 40px;
     width: 340px;
     padding-left: 20px;
@@ -37,7 +37,7 @@
     font-weight: 400;
 }
 
-#addItemBtn{
+#addItemBtn {
     height: 40px;
     width: 150px;
     color: white;
@@ -46,12 +46,12 @@
 }
 
 
-.container{
+.container {
     display: flex;
     justify-content: space-between;
 }
 
-#todayTodo{
+#todayTodo {
     background-color: black;
     color: white;
     margin: 20px 40px;
@@ -65,7 +65,7 @@
     font-weight: 400;
 }
 
-#completedTodo{
+#completedTodo {
     background-color: white;
     color: black;
     margin: 20px 40px;
@@ -77,4 +77,18 @@
     border-radius: 8px;
     font-size: 16px;
     font-weight: 400;
+}
+
+.btn2 {
+    background-color: black;
+    border: none;
+    cursor: pointer;
+    appearance: none;
+}
+
+#btn1{
+    background-color: white;
+    border: none;
+    cursor: pointer;
+    appearance: none;
 }
